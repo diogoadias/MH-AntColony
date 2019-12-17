@@ -17,9 +17,9 @@ class MDGP:
         self.bags_values = []
     
     def read_file(self, filename):
-        file = pd.read_csv(filename, delimiter=" ", skiprows=0, header=None)
+        file = pd.read_csv(filename, delimiter=" ", skiprows=0, header=None, engine='python')
         info = file.iloc[0]
-       
+              
         self.size = int(info[0])
         self.group_size = int(info[1])
         self.type = info[2]
@@ -27,6 +27,7 @@ class MDGP:
         
         count = 0
         max_group = (self.group_size * 2) -1
+        
         while count <= max_group:
             self.groups.append(info.iloc[3+count])
             self.groups.append(info.iloc[3+count+1])
@@ -68,18 +69,18 @@ class MDGP:
                 count +=1
             bags.append(temp_bag)
         
-        self.adjust_bags(bags) 
-
+        self.values = self.adjust_bags(bags) 
+        return self.values
         #print(bags)
 
     def adjust_bags(self, bags):
         count = 0
+       
         for i in range(0, self.group_size):
             min = self.groups[count]
             max = self.groups[count+1]
-            if len(bags[i]) < min or len(bags[i]) > max:                
+            if len(bags[i]) < min or len(bags[i]) > max:                               
                 while len(bags[i]) < min or len(bags[i]) > max:
-                    
                     bags[i].append(bags[i-1][0])
                     bags[i-1].remove(bags[i-1][0])
                     self.adjust_bags(bags)
@@ -95,9 +96,22 @@ class MDGP:
                 total += self.distances[start][end]
                 count += 1
             all_values.append(total)
+        return all_values
+        
 
-        print(bags)
-        print(all_values)  
+        #print(bags)
+        #print(all_values)   
+    
+    @staticmethod
+    def stats(values, iteration=1):
+        #fitnesses = [ individual.fitness.values[0] for individual in population ]
+        return {
+            'mean': np.mean(values),
+            'std': np.std(values),
+            'max': np.max(values),
+            'min': np.min(values),
+            'total': np.sum(values)
+        }  
         
 #arquivo = MDGP("RanReal_n010_ds_01.txt")
 
