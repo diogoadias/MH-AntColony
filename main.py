@@ -4,20 +4,22 @@ import os
 from mdgp import MDGP
 from ant import AntColony
 
-files = os.listdir("mdgplib/RanReal/")
+files = os.listdir("mdgplib/Geo/")
 
-for arquivo in files:
+for file in files:
     start = time.time()
-    print("INSTANCE:", arquivo)
-    arquivo = MDGP("mdgplib/RanReal/" + arquivo)
+    print("INSTANCE:", file)
 
-    distances = arquivo.distances
+    file = MDGP("mdgplib/Geo/" + file)
+
+    distances = file.distances
 
     ant_colony = AntColony(distances, 5, 10, 100, 0.95, alpha=1, beta=1)
     shortest_path = ant_colony.run()
 
-    values = arquivo.create_bags(shortest_path)
+    values = file.create_bags(shortest_path)
     results = MDGP.stats(values)
+        
     print(results)
 
     end = time.time()

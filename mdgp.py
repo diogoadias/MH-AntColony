@@ -34,15 +34,13 @@ class MDGP:
             count += 2
 
         self.data = file[1:]
-        #file.columns = ["start", "end", "distance"]
         self.create_matrix()
 
     def create_matrix(self):
         distances = np.zeros((self.size, self.size))
         for i in range(0, len(self.data)):
             start = self.data[0].values[i]
-            end = self.data[1].values[i]
-            
+            end = self.data[1].values[i]            
             distances[start][end] = float(self.data[2].values[i])                
 
         self.distances = distances
@@ -59,9 +57,9 @@ class MDGP:
         for i in range(0, len(self.groups), 2):
             count = 0
             temp_bag = []
-            min = self.groups[i]
-            max = self.groups[i+1]            
-            while count < max:
+            min_value = self.groups[i]
+            max_value = self.groups[i+1]            
+            while count < max_value:
                 if position < len(start_bag):
                     temp_bag.append(start_bag[position])
                     
@@ -70,17 +68,16 @@ class MDGP:
             bags.append(temp_bag)
         
         self.values = self.adjust_bags(bags) 
-        return self.values
-        #print(bags)
+        return self.values        
 
     def adjust_bags(self, bags):
         count = 0
        
         for i in range(0, self.group_size):
-            min = self.groups[count]
-            max = self.groups[count+1]
-            if len(bags[i]) < min or len(bags[i]) > max:                               
-                while len(bags[i]) < min or len(bags[i]) > max:
+            min_value = self.groups[count]
+            max_value = self.groups[count+1]
+            if len(bags[i]) < min_value or len(bags[i]) > max_value:                               
+                while len(bags[i]) < min_value or len(bags[i]) > max_value:
                     bags[i].append(bags[i-1][0])
                     bags[i-1].remove(bags[i-1][0])
                     self.adjust_bags(bags)
@@ -96,25 +93,15 @@ class MDGP:
                 total += self.distances[start][end]
                 count += 1
             all_values.append(total)
-        return all_values
-        
-
-        #print(bags)
-        #print(all_values)   
+        return all_values         
     
     @staticmethod
     def stats(values, iteration=1):
-        #fitnesses = [ individual.fitness.values[0] for individual in population ]
+        
         return {
             'mean': np.mean(values),
             'std': np.std(values),
             'max': np.max(values),
             'min': np.min(values),
             'total': np.sum(values)
-        }  
-        
-#arquivo = MDGP("RanReal_n010_ds_01.txt")
-
-
-#print(arquivo.data[0].values[11])
-#print(arquivo.distances)
+        }
